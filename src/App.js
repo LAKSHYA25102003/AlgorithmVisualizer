@@ -1,10 +1,13 @@
 import Landing from "./Pages/Landing";
+import ContextState from "./Context/ContextState";
 
 function App() {
   return (
-    <div>
-      <Landing/>
-    </div>
+    <ContextState>
+      <div>
+        <Landing />
+      </div>
+    </ContextState>
   );
 }
 
