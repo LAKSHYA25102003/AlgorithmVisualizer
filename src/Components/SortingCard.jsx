@@ -1,9 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function SortingCard({algo}) {
+
+function SortingCard({ algo }) {
+  const navigate = useNavigate();
   return (
     <div className="flex justify-center items-center ">
-      <div className="w-[80%] hover:scale-[1.03] ease-in-out duration-300 cursor-pointer">
+      <div
+        onClick={() => {
+          navigate(algo.url);
+        }}
+        className="w-[80%] hover:scale-[1.03] ease-in-out duration-300 cursor-pointer"
+      >
         <div class="block  rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
           <div
             class="relative overflow-hidden bg-cover bg-no-repeat"

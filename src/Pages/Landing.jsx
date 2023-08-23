@@ -11,8 +11,8 @@ function Landing() {
     <div className="bg-gradient-to-r from-purple-600 via-pink-300 to-blue-600 min-h-screen">
       <LandingNavbar />
       <div className="w-[100%]  min-h-screen flex flex-col gap-5 justify-center items-center">
-        <div className="text-white mt-40 mb-10">
-          <div className="text-[20px] md:text-[40px] font-bold text-center">
+        <div className="text-white mt-[90px] mb-10">
+          <div className="text-[17px] md:text-[35px] font-bold text-center">
             Visualize Algorithms
           </div>
           <div className="text-center md:text-[20px] font-bold">
