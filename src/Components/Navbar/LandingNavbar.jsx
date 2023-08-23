@@ -5,7 +5,7 @@ import { useContext } from "react";
 function LandingNavbar() {
   const { setNum } = useContext(Context);
   return (
-    <div className="main fixed z-50 top-0 right-0 left-0 bg-white h-[50px] md:h-[70px]">
+    <div className="main shadow-md fixed z-50 top-0 right-0 left-0 bg-white h-[50px] md:h-[70px]">
       <div className="h-[100%] pt-[10px] pb-[10px] flex justify-between items-center px-4">
         <div
           className=" text-blue-600 ml-[10px] text-[15px] md:text-[27px] font-bold cursor-pointer"
