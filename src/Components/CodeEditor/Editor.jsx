@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Window from "./Window";
-// import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,19 +10,20 @@ import Select from "react-select";
 import OutputWindow from "./OutputWindow";
 import OutputDetails from "./OutputDetails";
 import CustomInput from "./CustomInput";
-import { customStyles } from "./customStyles";
+import axios from "axios";
 
 const javascriptDefault = `// some comment`;
 
 const Editor = () => {
   const context = useContext(Context);
-  const { languageOptions } = context;
+  const { languageOptions, themes } = context;
   const [code, setCode] = useState(javascriptDefault);
   const [customInput, setCustomInput] = useState("");
   const [outputDetails, setOutputDetails] = useState(null);
   const [processing, setProcessing] = useState(null);
-  const [theme, setTheme] = useState("cobalt");
+  const [theme, setTheme] = useState("vs-dark");
   const [language, setLanguage] = useState(languageOptions[0]);
+  const [fontSize, setFontSize] = useState(20);
   const onSelectChange = (sl) => {
     setLanguage(sl);
   };
@@ -46,38 +46,29 @@ const Editor = () => {
 
   const handleCompile = () => {
     setProcessing(true);
-    const formData = {
-      language_id: language.id,
-      // encode source code in base64
-      source_code: btoa(code),
-      stdin: btoa(customInput),
+    let data = {
+      code: code,
+      language: language,
+      input: customInput,
     };
-
-    const options = {
-      method: "POST",
-      url: process.env.REACT_APP_RAPID_API_URL,
-      params: { base64_encoded: "true", fields: "*" },
+    let config = {
+      method: "post",
+      url: "https://codexweb.netlify.app/.netlify/functions/enforceCode",
       headers: {
-        "content-type": "application/json",
         "Content-Type": "application/json",
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
       },
-      data: formData,
+      data: data,
     };
 
-    // axios
-    //   .request(options)
-    //   .then(function (response) {
-    //     console.log("res.data", response.data);
-    //     const token = response.data.token;
-    //     checkStatus(token);
-    //   })
-    //   .catch((err) => {
-    //     let error = err.response ? err.response.data : err;
-    //     setProcessing(false);
-    //     console.log(error);
-    //   });
+    axios(config)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+      setProcessing(false);
   };
 
   const statuses = [
@@ -150,8 +141,7 @@ const Editor = () => {
       },
     };
     try {
-      //   let response = await axios.request(options);
-      let response;
+      let response = await axios.request(options);
       let statusId = response.data.status?.id;
 
       // Processed - we have a result
@@ -202,13 +192,10 @@ const Editor = () => {
     return (
       <>
         <Select
-          placeholder={`Filter By Category`}
-          styles={customStyles}
+          placeholder={language}
           value={language}
           options={languageOptions}
-          defaultValue={languageOptions[0]}
           onChange={(selectedOption) => onSelectChange(selectedOption)}
-          className="bg-blue-400 z-40 border-none text-black cursor-pointer hover:scale-[1.03] ease-in-out duration-300 p-2 rounded-md font-bold"
         />
       </>
     );
@@ -228,19 +215,39 @@ const Editor = () => {
         pauseOnHover
       />
 
-   
-      <div className="text-center text-lg font-bold text-[20px] text-black mb-5">Practice Algorithm</div>
-      <div className="flex justify-between items-center flex-row">
-        <div className="px-4 py-2">
-          <LanguagesDropdown onSelectChange={onSelectChange} />
-        </div>
+      <div className="text-center text-lg font-bold text-[20px] text-black mb-5">
+        Practice Algorithm
       </div>
+
       <div className="flex flex-row space-x-4 items-start px-4 py-4">
-        <div className="flex flex-col w-full h-full justify-start items-end">
+        <div className="flex flex-col w-full h-full justify-start ">
+          <div className="flex justify-between items-center flex-row">
+            <div className="px-4 py-2">
+              <LanguagesDropdown onSelectChange={onSelectChange} />
+            </div>
+            <div className="px-4 py-2">
+              <Select
+                placeholder={theme}
+                value={theme}
+                options={themes}
+                onChange={(e) => setTheme(e.value)}
+              />
+            </div>
+            <input
+              type="range"
+              min="18"
+              max="30"
+              value={fontSize}
+              step="2"
+              onChange={(e) => {
+                setFontSize(e.target.value);
+              }}
+            />
+          </div>
           <Window
-            code={code}
-            onChange={onChange}
-            language={language?.value}
+            setCode={setCode}
+            defaultValue="# Enter your code here"
+            language={language}
             theme={theme}
           />
         </div>
