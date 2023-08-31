@@ -125,10 +125,13 @@ export default function ContextState(props) {
   };
 
   const languageOptions = [
-    { value: "c", label: "C" },
-    { value: "cpp", label: "C++" },
-    { value: "python", label: "Python" },
-    { value: "java", label: "Java" },
+    { value: "C", label: "C" },
+    { value: "CPP14", label: "C++14" },
+    { value: "CPP17", label: "C++17" },
+    { value: "JAVASCRIPT_NODE", label: "JavaScript(Nodejs)" },
+    { value: "JAVA8", label: "Java 8" },
+    { value: "JAVA14", label: "Java 14" },
+    { value: "PYTHON3_8", label: "Python 3.8" },
   ];
 
   const themes = [

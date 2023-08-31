@@ -44,125 +44,67 @@ const Editor = () => {
     }
   };
 
-  const handleCompile = () => {
+  const handleCompile = async () => {
     setProcessing(true);
     let data = {
-      code: code,
-      language: language,
+      lang: language.value,
+      source: code,
       input: customInput,
     };
-    let config = {
-      method: "post",
-      url: "https://codexweb.netlify.app/.netlify/functions/enforceCode",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    axios(config)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-      setProcessing(false);
-  };
-
-  const statuses = [
-    {
-      id: 1,
-      description: "In Queue",
-    },
-    {
-      id: 2,
-      description: "Processing",
-    },
-    {
-      id: 3,
-      description: "Accepted",
-    },
-    {
-      id: 4,
-      description: "Wrong Answer",
-    },
-    {
-      id: 5,
-      description: "Time Limit Exceeded",
-    },
-    {
-      id: 6,
-      description: "Compilation Error",
-    },
-    {
-      id: 7,
-      description: "Runtime Error (SIGSEGV)",
-    },
-    {
-      id: 8,
-      description: "Runtime Error (SIGXFSZ)",
-    },
-    {
-      id: 9,
-      description: "Runtime Error (SIGFPE)",
-    },
-    {
-      id: 10,
-      description: "Runtime Error (SIGABRT)",
-    },
-    {
-      id: 11,
-      description: "Runtime Error (NZEC)",
-    },
-    {
-      id: 12,
-      description: "Runtime Error (Other)",
-    },
-    {
-      id: 13,
-      description: "Internal Error",
-    },
-    {
-      id: 14,
-      description: "Exec Format Error",
-    },
-  ];
-
-  const checkStatus = async (token) => {
-    const options = {
-      method: "GET",
-      url: process.env.REACT_APP_RAPID_API_URL + "/" + token,
-      params: { base64_encoded: "true", fields: "*" },
-      headers: {
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
-      },
-    };
-    try {
-      let response = await axios.request(options);
-      let statusId = response.data.status?.id;
-
-      // Processed - we have a result
-      if (statusId === 1 || statusId === 2) {
-        // still processing
-        setTimeout(() => {
-          checkStatus(token);
-        }, 2000);
-        return;
-      } else {
-        setProcessing(false);
-        setOutputDetails(response.data);
-        showSuccessToast(`Compiled Successfully!`);
-        console.log("response.data", response.data);
-        return;
+    let response = await fetch(
+      "https://api.hackerearth.com/v4/partner/code-evaluation/submissions/",
+      {
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+          "client-secret": "7373e9baadb276d12ba6fd15c34864a8b75656e0",
+        },
+        body: JSON.stringify(data),
       }
-    } catch (err) {
-      console.log("err", err);
-      setProcessing(false);
-      showErrorToast();
+    );
+    response = await response.json();
+    let compile_status = null;
+    let status_update_url = null;
+    while (compile_status === null) {
+      let result = await fetch(response.status_update_url, {
+        method: "get",
+        headers: {
+          "content-type": "application/json",
+          "client-secret": "7373e9baadb276d12ba6fd15c34864a8b75656e0",
+        },
+      });
+      result = await result.json();
+      status_update_url = result.status_update_url;
+      compile_status = result.result.compile_status;
     }
+    if (compile_status !== "OK") {
+      setOutputDetails(compile_status);
+      setProcessing(false);
+      return;
+    }
+    let run_status = null;
+    let runResult = null;
+    while (run_status === null) {
+      let result = await fetch(status_update_url, {
+        method: "get",
+        headers: {
+          "content-type": "application/json",
+          "client-secret": "7373e9baadb276d12ba6fd15c34864a8b75656e0",
+        },
+      });
+      result = await result.json();
+      run_status = result.result.run_status.status_detail;
+      runResult = result;
+    }
+    if (runResult.result.run_status.status !== "AC") {
+      setOutputDetails(runResult.result.run_status.status);
+      return ;
+    }
+    const outputURL = runResult.result.run_status.output;
+    let result=await fetch('https://algo-proxy.onrender.com/proxy?url=' + encodeURIComponent(outputURL));
+    result=await result.text();
+    setOutputDetails(result);
+    setProcessing(false);
   };
 
   const showSuccessToast = (msg) => {
@@ -191,12 +133,14 @@ const Editor = () => {
   const LanguagesDropdown = ({ onSelectChange }) => {
     return (
       <>
-        <Select
-          placeholder={language}
-          value={language}
-          options={languageOptions}
-          onChange={(selectedOption) => onSelectChange(selectedOption)}
-        />
+        <div className="w-[150px]">
+          <Select
+            placeholder={language}
+            value={language}
+            options={languageOptions}
+            onChange={(selectedOption) => onSelectChange(selectedOption)}
+          />
+        </div>
       </>
     );
   };
@@ -218,7 +162,6 @@ const Editor = () => {
       <div className="text-center text-lg font-bold text-[20px] text-black mb-5">
         Practice Algorithm
       </div>
-
       <div className="flex flex-row space-x-4 items-start px-4 py-4">
         <div className="flex flex-col w-full h-full justify-start ">
           <div className="flex justify-between items-center flex-row">
@@ -270,7 +213,6 @@ const Editor = () => {
               {processing ? "Processing..." : "Compile and Execute"}
             </button>
           </div>
-          {outputDetails && <OutputDetails outputDetails={outputDetails} />}
         </div>
       </div>
     </>
