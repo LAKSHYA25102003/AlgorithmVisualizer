@@ -1,20 +1,29 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function LandingNavbar() {
   const navigate = useNavigate();
   return (
-    <div className="main shadow-md fixed z-50 top-0 right-0 left-0 bg-white h-[50px] md:h-[70px]">
+    <div className="main shadow-md bg-[#050814] sticky top-0 left-0 right-0 z-50  opacity-[85%] h-[50px] md:h-[70px] min-w-full border-b-[1px] border-gray-400 ">
       <div className="h-[100%] pt-[10px] pb-[10px] flex justify-between items-center px-4">
-        <div
+        <motion.div
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.5 }}
           onClick={() => {
             navigate("/");
           }}
-          className=" text-blue-600 ml-[10px] text-[15px] md:text-[27px] font-bold cursor-pointer"
+          className=" text-white font-fav1 ml-[10px] text-[15px] md:text-[27px] font-bold cursor-pointer"
         >
           Algorithms Visualizer
-        </div>
-        <div className="mr-[10px] flex gap-4 justify-center items-center">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: 200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.5 }}
+          className="mr-[10px] flex gap-4 justify-center items-center"
+        >
           <button
             onClick={() => {
               navigate("/bubble-sort");
@@ -39,7 +48,7 @@ function LandingNavbar() {
           >
             Quick Sort
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
