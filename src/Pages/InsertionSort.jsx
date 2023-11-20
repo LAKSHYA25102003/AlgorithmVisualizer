@@ -5,12 +5,13 @@ import { useContext } from "react";
 import Context from "../Context/Context";
 import Editor from "../Components/CodeEditor/Editor";
 
-function BubbleSort() {
-  const { sortingState, generateSortingArray, showRun, changeSortingSpeed } =
+function InsertionSort() {
+  const { sortingState, generateSortingArray, showRun, changeSortingSpeed ,changeAlgorithm} =
     useContext(Context);
   useEffect(() => {
     generateSortingArray();
   }, []);
+ 
   return (
     <div className="bg-gradient-to-r flex flex-col justify-between from-purple-600 via-pink-300 to-blue-600 min-h-screen">
       <LandingNavbar />
@@ -39,7 +40,7 @@ function BubbleSort() {
           <button
             disabled={sortingState.sorting}
             onClick={()=>{
-              showRun("bubbleSort")
+                showRun("insertionSort");
             }}
             className="bg-blue-600 text-white cursor-pointer hover:scale-[1.03] ease-in-out duration-300 p-2 rounded-md font-bold"
           >
@@ -71,4 +72,4 @@ function BubbleSort() {
   );
 }
 
-export default BubbleSort;
+export default InsertionSort;

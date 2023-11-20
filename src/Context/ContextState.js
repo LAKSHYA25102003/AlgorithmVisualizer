@@ -2,43 +2,28 @@ import Context from "./Context.js";
 import { useState } from "react";
 
 export default function ContextState(props) {
-  const algorithms = [
-    {
-      name: "Bubble Sort",
-      text: "Bubble Sort is the simplest sorting algorithm .This sorting algorithm is slow.It compares between two elements,larger element among those comparable element swap with small element and placed in right.It used loop that's why it's time complexity is high.",
-      url: "/bubble-sort",
-    },
-    {
-      name: "Quick Sort",
-      text: "Quick Sort is also sorting algorithm .It's name Quick sort that does n't mean it is Fastest Algorithm . It is faster than Bubble sort. It is divide and conquer algorithm so , It's use Recursion .So time complexity is less compair to Bubble Sort .  ",
-      url: "/quick-sort",
-    },
-    {
-      name: "Merge Sort",
-      text: "Bubble Sort is the simplest sorting algorithm .This sorting algorithm is slow.It compares between two elements,larger element among those comparable element swap with small element and placed in right.It used loop that's why it's time complexity is high.",
-      url: "/merge-sort",
-    },
-  ];
-
+  
   const speedMap = {
     slow: 1000,
     normal: 500,
     fast: 250,
   };
 
-  const [sortingState, setSortingState] = useState({
-    array: [],
-    delay: speedMap["slow"],
-    algorithm: "bubbleSort",
-    sorted: false,
-    sorting: false,
-  });
+  
 
-  function awaitTimeout(timeout) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
+  const [sortingState,setSortingState] = useState({
+    array:[],
+    delay:500,
+    algorithm:"bubbleSort",
+    sorted:false,
+    sorting:false
+  })
+
+  function awaitTimeout(timeout){
+    return new Promise((resolve)=>{
+      setTimeout(()=>{
         resolve(true);
-      }, timeout);
+      },timeout);
     });
   }
 
@@ -77,7 +62,6 @@ export default function ContextState(props) {
 
   const bubbleSort = async () => {
     const arr = sortingState.array.map((item) => item.value);
-
     for (let i = 0; i < arr.length; i++) {
       for (let j = 0; j < arr.length - i - 1; j++) {
         changeBar(j, { state: "selected" });
@@ -98,6 +82,33 @@ export default function ContextState(props) {
     }
   };
 
+  const insertionSort= async ()=>{
+    let arr=[];
+    sortingState.array.map((a)=>{
+      arr.push(a.value);
+    })
+    for(let i=1;i<arr.length;i++)
+    {
+      let j=i-1;
+      while(j>=0&&arr[j+1]<arr[j])
+      {
+        changeBar(j,{state:"selected"});
+        changeBar(j+1,{state:"selected"});
+        await awaitTimeout(sortingState.delay);
+        let temp=arr[j];
+        arr[j]=arr[j+1];
+        arr[j+1]=temp;
+        changeBar(j,{value:arr[j]});
+        changeBar(j+1,{value:arr[j+1]});
+        await awaitTimeout(sortingState.delay);
+        changeBar(j,{state:"idle"});
+        changeBar(j+1,{state:"idle"});
+        j--;
+      }
+
+    }
+  }
+
   const changeSortingSpeed = (e) => {
     setSortingState((prev) => ({
       ...prev,
@@ -107,22 +118,24 @@ export default function ContextState(props) {
 
   const algorithmMap = {
     bubbleSort: bubbleSort,
+    insertionSort:insertionSort
   };
 
-  const showRun = async () => {
+  
+
+  const showRun = async (algo) => {
     setSortingState((prev) => ({
       ...prev,
       sorting: true,
     }));
-
-    await algorithmMap[sortingState.algorithm]();
-
+    await algorithmMap[algo]();
     setSortingState((prev) => ({
       ...prev,
       sorted: true,
       sorting: false,
     }));
   };
+ 
 
   const languageOptions = [
     { value: "C", label: "C" },
@@ -142,14 +155,16 @@ export default function ContextState(props) {
   return (
     <Context.Provider
       value={{
-        algorithms,
         generateSortingArray,
         sortingState,
         bubbleSort,
         changeSortingSpeed,
         showRun,
         languageOptions,
-        themes
+        themes,
+        insertionSort,
+        setSortingState,
+        
       }}
     >
       {props.children}
