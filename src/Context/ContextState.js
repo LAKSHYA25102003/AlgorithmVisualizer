@@ -2,28 +2,25 @@ import Context from "./Context.js";
 import { useState } from "react";
 
 export default function ContextState(props) {
-  
   const speedMap = {
     slow: 1000,
     normal: 500,
     fast: 250,
   };
 
-  
+  const [sortingState, setSortingState] = useState({
+    array: [],
+    delay: 500,
+    algorithm: "bubbleSort",
+    sorted: false,
+    sorting: false,
+  });
 
-  const [sortingState,setSortingState] = useState({
-    array:[],
-    delay:500,
-    algorithm:"bubbleSort",
-    sorted:false,
-    sorting:false
-  })
-
-  function awaitTimeout(timeout){
-    return new Promise((resolve)=>{
-      setTimeout(()=>{
+  function awaitTimeout(timeout) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
         resolve(true);
-      },timeout);
+      }, timeout);
     });
   }
 
@@ -44,7 +41,7 @@ export default function ContextState(props) {
       ...prev,
       array: generatedArray,
       sorted: false,
-      sorting: sorting || false,
+      sorting: false,
     }));
   };
 
@@ -82,32 +79,58 @@ export default function ContextState(props) {
     }
   };
 
-  const insertionSort= async ()=>{
-    let arr=[];
-    sortingState.array.map((a)=>{
+  const insertionSort = async () => {
+    let arr = [];
+    sortingState.array.map((a) => {
       arr.push(a.value);
-    })
-    for(let i=1;i<arr.length;i++)
-    {
-      let j=i-1;
-      while(j>=0&&arr[j+1]<arr[j])
-      {
-        changeBar(j,{state:"selected"});
-        changeBar(j+1,{state:"selected"});
+    });
+    for (let i = 1; i < arr.length; i++) {
+      let j = i - 1;
+      while (j >= 0 && arr[j + 1] < arr[j]) {
+        changeBar(j, { state: "selected" });
+        changeBar(j + 1, { state: "selected" });
         await awaitTimeout(sortingState.delay);
-        let temp=arr[j];
-        arr[j]=arr[j+1];
-        arr[j+1]=temp;
-        changeBar(j,{value:arr[j]});
-        changeBar(j+1,{value:arr[j+1]});
+        let temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+        changeBar(j, { value: arr[j] });
+        changeBar(j + 1, { value: arr[j + 1] });
         await awaitTimeout(sortingState.delay);
-        changeBar(j,{state:"idle"});
-        changeBar(j+1,{state:"idle"});
+        changeBar(j, { state: "idle" });
+        changeBar(j + 1, { state: "idle" });
         j--;
       }
-
     }
-  }
+  };
+
+  const selectionSort = async () => {
+    let arr = [];
+    sortingState.array.map((a) => {
+      arr.push(a.value);
+    });
+    for (let i = 0; i < arr.length; i++) {
+      let mini = i;
+      changeBar(mini, { state: "selected" });
+      for (let j = i + 1; j < arr.length; j++) {
+        changeBar(j, { state: "selected" });
+        await awaitTimeout(sortingState.delay);
+        if (arr[j] < arr[mini]) {
+          changeBar(mini, { state: "idle" });
+          mini = j;
+          changeBar(mini, { state: "selected" });
+        } else {
+          changeBar(j, { state: "idle" });
+        }
+        awaitTimeout(sortingState.delay);
+      }
+      let temp=arr[i];
+      arr[i]=arr[mini];
+      changeBar(i,{value:arr[i]});
+      changeBar(mini,{state:"idle"});
+      arr[mini]=temp;
+      changeBar(mini,{value:arr[mini]});
+    }
+  };
 
   const changeSortingSpeed = (e) => {
     setSortingState((prev) => ({
@@ -118,24 +141,25 @@ export default function ContextState(props) {
 
   const algorithmMap = {
     bubbleSort: bubbleSort,
-    insertionSort:insertionSort
+    insertionSort: insertionSort,
+    selectionSort: selectionSort,
   };
 
-  
-
-  const showRun = async (algo) => {
+  const showRun = async () => {
     setSortingState((prev) => ({
       ...prev,
       sorting: true,
     }));
-    await algorithmMap[algo]();
+
+    console.log(sortingState);
+
+    await algorithmMap[sortingState.algorithm]();
     setSortingState((prev) => ({
       ...prev,
       sorted: true,
       sorting: false,
     }));
   };
- 
 
   const languageOptions = [
     { value: "C", label: "C" },
@@ -164,7 +188,7 @@ export default function ContextState(props) {
         themes,
         insertionSort,
         setSortingState,
-        
+        selectionSort,
       }}
     >
       {props.children}

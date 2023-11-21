@@ -8,6 +8,7 @@ import BubbleCard from "../Components/BubbleCard/BubbleCard";
 import MergeCard from "../Components/MergeCard/Merge";
 import QuickCard from "../Components/QuickCard/QuickCard";
 import InsertionCard from "../Components/InsertionCard/InsertionCard";
+import SelectionCard from "../Components/SelectionCard/SelectionCard";
 
 function Landing() {
   const { algorithms } = useContext(Context);
@@ -39,9 +40,8 @@ function Landing() {
 
         <div className="grid grid-cols-3 gap-8 px-4 mb-5 mt-10">
           <BubbleCard/>
-          <MergeCard/>
-          <QuickCard/>
           <InsertionCard/>
+          <SelectionCard/>
         </div>
       </div>
       <Footer />

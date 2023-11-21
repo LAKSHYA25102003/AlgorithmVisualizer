@@ -1,15 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import Context from "../../Context/Context";
 
 function InsertionCard() {
   const navigate = useNavigate();
+  const{setSortingState} = useContext(Context);
+  const changeAlgo=(algo)=>{
+    setSortingState((prev)=>({
+        ...prev,
+        algorithm:algo
+    }))
+  
+  }
   let text =
     "Insertion sort is a simple sorting algorithm that works by repeatedly inserting elements from an unsorted array into a sorted sub-array at the correct position. The algorithm starts by considering the first element of the array as a sorted sub-array. It then picks the next element and compares it to the elements in the sorted sub-array, moving elements to the right until it finds the correct position to insert the new element. This process is repeated for each subsequent element until the entire array is sorted.";
   return (
     <div className="flex justify-center items-center ">
       <div
         onClick={() => {
-          navigate("/insertion-sort");
+          changeAlgo("insertionSort");
+          navigate("/sorting");
         }}
         className="w-[100%] hover:scale-[1.03] ease-in-out duration-300 cursor-pointer"
       >

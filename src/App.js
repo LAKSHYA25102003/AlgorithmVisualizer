@@ -5,6 +5,7 @@ import BubbleSort from "./Pages/BubbleSort";
 import MergeSort from "./Pages/MergeSort";
 import QuickSort from "./Pages/QuickSort";
 import InsertionSort from "./Pages/InsertionSort";
+import Sorting from "./Pages/Sorting.jsx";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/quick-sort" element={<QuickSort />}></Route>
           <Route path="/merge-sort" element={<MergeSort />}></Route>
           <Route path="/insertion-sort" element={<InsertionSort />}></Route>
+          <Route path="/sorting" element={<Sorting />}></Route>
         </Routes>
       </Router>
     </ContextState>

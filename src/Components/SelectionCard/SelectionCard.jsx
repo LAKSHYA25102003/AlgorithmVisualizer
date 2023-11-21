@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import Context from "../../Context/Context";
 
-function BubbleCard() {
+function SelectionCard() {
   const navigate = useNavigate();
   const{setSortingState} = useContext(Context);
   const changeAlgo=(algo)=>{
@@ -14,12 +14,12 @@ function BubbleCard() {
   
   }
   let text =
-    "Bubble sort is a simple sorting algorithm that works by repeatedly swapping adjacent elements in an array that are in the wrong order. This process is repeated until the entire array is sorted.";
+    "Selection sort is a sorting algorithm that sorts an array by repeatedly finding the minimum element from the unsorted part of the array and moving it to the beginning of the array. The algorithm starts by finding the minimum element from the entire array and swapping it with the first element. It then finds the minimum element from the remaining unsorted part of the array and swaps it with the second element, and so on until the entire array is sorted.";
   return (
     <div className="flex justify-center items-center ">
       <div
         onClick={() => {
-          changeAlgo("bubbleSort");
+          changeAlgo("selectionSort");
           navigate("/sorting");
         }}
         className="w-[100%] hover:scale-[1.03] ease-in-out duration-300 cursor-pointer"
@@ -38,7 +38,7 @@ function BubbleCard() {
           </div>
           <div class="p-6">
             <h5 class="mb-2 text-xl font-medium leading-tight text-neutral-800 dark:text-neutral-50">
-              Bubble Sort
+              Selection Sort
             </h5>
             {text.length > 60 ? (
               <p className="text-white ">{text.slice(0, 200)}...</p>
@@ -52,4 +52,4 @@ function BubbleCard() {
   );
 }
 
-export default BubbleCard;
+export default SelectionCard;

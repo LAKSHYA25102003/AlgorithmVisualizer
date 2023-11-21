@@ -1,20 +1,23 @@
 import React, { useEffect } from "react";
 import LandingNavbar from "../Components/Navbar/LandingNavbar";
+import Footer from "../Components/Footer";
 import { useContext } from "react";
 import Context from "../Context/Context";
 import Editor from "../Components/CodeEditor/Editor";
+import SortingButtons from "../Components/SortingButtons/SortingButtons";
 
-function InsertionSort() {
-  const { sortingState, generateSortingArray, showRun, changeSortingSpeed ,changeAlgorithm} =
+
+function Sorting() {
+  const { sortingState, generateSortingArray, showRun, changeSortingSpeed ,setSortingState} =
     useContext(Context);
   useEffect(() => {
     generateSortingArray();
   }, []);
- 
   return (
     <div className="bg-gradient-to-r flex flex-col justify-between from-purple-600 via-pink-300 to-blue-600 min-h-screen">
       <LandingNavbar />
-      <div className="flex flex-col gap-4 justify-center items-center mt-32">
+      <SortingButtons/>
+      <div className="flex flex-col gap-4 justify-center items-center mt-20">
         <div className="max-w-3xl w-full">
           <div className="mb-4 chart-container">
             {sortingState.array.map((bar, i) => (
@@ -37,11 +40,12 @@ function InsertionSort() {
         </div>
         <div className="flex items-center gap-4 max-w-3xl mb-8">
           <button
-            disabled={sortingState.sorting}
             onClick={()=>{
-                showRun("insertionSort");
+              if(sortingState.sorting) return ;
+             
+              showRun()
             }}
-            className="bg-blue-600 text-white cursor-pointer hover:scale-[1.03] ease-in-out duration-300 p-2 rounded-md font-bold"
+            className={`${!sortingState.sorting?"bg-blue-600":"bg-blue-300"} text-white cursor-pointer hover:scale-[1.03] ease-in-out duration-300 p-2 rounded-md font-bold`}
           >
             Start
           </button>
@@ -71,4 +75,4 @@ function InsertionSort() {
   );
 }
 
-export default InsertionSort;
+export default Sorting;
