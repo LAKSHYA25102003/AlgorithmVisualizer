@@ -5,10 +5,9 @@ import Context from "../Context/Context";
 import Footer from "../Components/Footer/Footer";
 import { motion } from "framer-motion";
 import BubbleCard from "../Components/BubbleCard/BubbleCard";
-import MergeCard from "../Components/MergeCard/Merge";
-import QuickCard from "../Components/QuickCard/QuickCard";
 import InsertionCard from "../Components/InsertionCard/InsertionCard";
 import SelectionCard from "../Components/SelectionCard/SelectionCard";
+import Merge from "../Components/MergeCard/Merge";
 
 function Landing() {
   const { algorithms } = useContext(Context);
@@ -42,6 +41,7 @@ function Landing() {
           <BubbleCard/>
           <InsertionCard/>
           <SelectionCard/>
+          <Merge/>
         </div>
       </div>
       <Footer />

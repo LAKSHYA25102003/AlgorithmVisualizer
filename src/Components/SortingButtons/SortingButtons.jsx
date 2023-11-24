@@ -24,6 +24,9 @@ function SortingButtons() {
         <button onClick={()=>{changeAlgo("selectionSort")}} className={`${sortingState.algorithm==="selectionSort"?"bg-[#050814]":"bg-[#05081489]"} hover:bg-[#050814] ease-in-out transition delay-50 hover:scale-105 p-2 rounded-md`}>
           Selection Sort
         </button>
+        <button onClick={()=>{changeAlgo("mergeSort")}} className={`${sortingState.algorithm==="mergeSort"?"bg-[#050814]":"bg-[#05081489]"} hover:bg-[#050814] ease-in-out transition delay-50 hover:scale-105 p-2 rounded-md`}>
+          Merge Sort
+        </button>
       </div>
     </div>
   );

@@ -1,7 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import Context from "../../Context/Context";
 
 function Merge() {
+  const {sortingState,setSortingState} = useContext(Context);
+  const changeAlgo=(algo)=>{
+    setSortingState((prev)=>({
+        ...prev,
+        algorithm:algo
+    }))
+  
+  }
   const navigate = useNavigate();
   let text =
     "Merge sort is a popular sorting algorithm that follows the divide-and-conquer approach. It works by breaking down an unsorted array into smaller, sorted subarrays and then merging those subarrays to produce a fully sorted array.";
@@ -9,7 +19,8 @@ function Merge() {
     <div className="flex justify-center items-center ">
       <div
         onClick={() => {
-          navigate("/merge-sort");
+          changeAlgo("mergeSort")
+          navigate("/sorting");
         }}
         className="w-[100%] hover:scale-[1.03] ease-in-out duration-300 cursor-pointer"
       >

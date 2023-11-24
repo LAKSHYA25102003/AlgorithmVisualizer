@@ -45,16 +45,13 @@ export default function ContextState(props) {
     }));
   };
 
-  const changeBar = (index, status) => {
-    if (status.state) {
-      let updatedArray = sortingState.array;
-      updatedArray[index] = { ...updatedArray[index], state: status.state };
-      setSortingState({ ...sortingState, array: updatedArray });
-    } else {
-      let updatedArray = sortingState.array;
-      updatedArray[index] = { ...updatedArray[index], value: status.value };
-      setSortingState({ ...sortingState, array: updatedArray });
-    }
+  const changeBar = (index, payload) => {
+    setSortingState((prev) => ({
+      ...prev,
+      array: prev.array.map((item, i) =>
+        i === index ? { ...item, ...payload } : item
+      ),
+    }));
   };
 
   const bubbleSort = async () => {
@@ -123,13 +120,72 @@ export default function ContextState(props) {
         }
         awaitTimeout(sortingState.delay);
       }
-      let temp=arr[i];
-      arr[i]=arr[mini];
-      changeBar(i,{value:arr[i]});
-      changeBar(mini,{state:"idle"});
-      arr[mini]=temp;
-      changeBar(mini,{value:arr[mini]});
+      let temp = arr[i];
+      arr[i] = arr[mini];
+      changeBar(i, { value: arr[i] });
+      changeBar(mini, { state: "idle" });
+      arr[mini] = temp;
+      changeBar(mini, { value: arr[mini] });
     }
+  };
+
+  const mergeSortMerger = async (arr, start, mid, end) => {
+    let left=[];
+    let right=[];
+    let temp=0;
+    for(let i=start;i<=mid;i++)
+    {
+      left[temp]=arr[i];
+      temp++;
+    }
+    temp=0;
+    for(let i=mid+1;i<=end;i++)
+    {
+      right[temp]=arr[i];
+      temp++;
+    }
+    let k = start;
+    let i = 0;
+    let j = 0;
+    while (i < left.length && j < right.length) {
+      if (left[i] < right[j]) {
+        changeBar(k, { value: left[i], state: "selected" });
+        arr[k++] = left[i++];
+      } else {
+        changeBar(k, { value: right[j], state: "selected" });
+        arr[k++] = right[j++];
+      }
+      await awaitTimeout(sortingState.delay);
+    }
+
+    while (i < left.length) {
+      changeBar(k, { value: left[i], state: "selected" });
+      arr[k++] = left[i++];
+      await awaitTimeout(sortingState.delay);
+    }
+
+    while (j < right.length) {
+      changeBar(k, { value: right[j], state: "selected" });
+      arr[k++] = right[j++];
+      await awaitTimeout(sortingState.delay);
+    }
+
+    for (let i = start; i <= end; i++) {
+      changeBar(i, { value: arr[i], state: "idle" });
+    }
+  };
+
+  async function mergeSortHelper(arr, start = 0, end = arr.length - 1) {
+    if (start >= end) return;
+    const middle = Math.floor((start + end) / 2);
+    await mergeSortHelper(arr, start, middle);
+    await mergeSortHelper(arr, middle + 1, end);
+    await mergeSortMerger(arr, start, middle, end);
+  }
+
+  const mergeSort = async () => {
+    const arr = sortingState.array.map((item) => item.value);
+    mergeSortHelper(arr);
   };
 
   const changeSortingSpeed = (e) => {
@@ -143,6 +199,7 @@ export default function ContextState(props) {
     bubbleSort: bubbleSort,
     insertionSort: insertionSort,
     selectionSort: selectionSort,
+    mergeSort: mergeSort,
   };
 
   const showRun = async () => {
@@ -151,7 +208,6 @@ export default function ContextState(props) {
       sorting: true,
     }));
 
-    console.log(sortingState);
 
     await algorithmMap[sortingState.algorithm]();
     setSortingState((prev) => ({
